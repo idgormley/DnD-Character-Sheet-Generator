@@ -166,7 +166,7 @@ VALUES
 INSERT INTO background_flaws
 VALUES
   ('Criminal', "When I see something valuable, I can't think about anything but how to steal it.", 1),
-  ('Criminal', "When faced with a choice between money and my friends, I usually choose the monye.", 2),
+  ('Criminal', "When faced with a choice between money and my friends, I usually choose the money.", 2),
   ('Criminal', "If there's a plan, I'll forget it. If I don't forget it, I'll ignore it.", 3),
   ('Criminal', "I have a 'tell' that reveals when I'm lying.", 4),
   ('Criminal', "I turn tail and run when things look bad.", 5),
