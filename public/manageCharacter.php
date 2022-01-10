@@ -1,10 +1,16 @@
 <!-- EXAMPLE OF USING TEMPLATED PHP FILES -->
 <?php include "templates/header.php"; ?>
 <?php include "templates/nav.php"; ?>
-<?php include "templates/session.php"; ?>
+
+
 <?php
-session_start();
-?>
+
+if(isset($_POST['view_submit'])) {
+	header("Location: display.php");
+}
+
+ ?>
+<form action="" method="post">
 <div class="manage-bg">
 	<div class="site-wrapper full-height">
 		<div class="grid-wrapper manage-menu full-height">
@@ -16,52 +22,56 @@ session_start();
 					</div>
 				</div>
 				<!-- START CHARACTER LISTING -->
-				<div class="grid-wrapper character-display">
+				<div class="grid-wrapper character-display text-center">
 					<!-- CHARACTER -->
-					<?php
-					$mysqli = NEW MySQLi('localhost','root','root','dnd');
-					$resultSet = $mysqli->query("SELECT character_name FROM characters WHERE pid =".$_SESSION['id']);
-					$character_name = array();
-					while($rows = $resultSet->fetch_assoc())
-					{
-					 array_push($character_name,$rows['character_name']);
-					}
-					$array_length = count($character_name);
-					  for($i = 0; $i<$array_length; $i++){
-						echo '
-						<div class="grid character">
-							<div class="grid-wrapper characer-options-container">
-								<div class="grid one-fifth push--one-fifth character-name">
-									<h4>', $character_name[$i] ,'</h4>
-								</div>
-								<div class="grid one-fifth character-update">
-									<div class="btn">
-										<a href="update.php">View</a>
-									</div>
-								</div>
-								<div class="grid one-fifth character-delete">
-									<div class="btn">
-										<a href="delete.php">Delete</a>
-									</div>
-								</div>
-							</div>
+						<div class='grid character'>
+							<div class='grid-wrapper characer-options-container'>
+								<?php
+								$mysqli = NEW MySQLi('localhost','root','root','dnd');
+								$resultSet = $mysqli->query("SELECT * FROM characters WHERE pid = '$_SESSION[id]'");
+
+								while($rows = $resultSet->fetch_assoc())
+								{
+									echo "
+			 							 <div class='grid one-quarter push--one-quarter character-name'>
+			 								 <h4>$rows[character_name]</h4>
+			 							 </div>
+										 <div class='grid one-eighth push--one-eighth'>
+											 <input type='radio' name='character' id='character' value='$rows[cID]'>
+										 </div>
+
+			 					 ";
+								}
+								?>
 						</div>
-						';
-					  }
-					?>
+					</div>
 				</div>
 			</div>
 			<!-- BOTTOM BUTTONS -->
 			<div class="grid one-half push--one-quarter page-options text-center">
 				<div class="btn">
-					<a href="#">Log Out</a>
+					<a href="step0.php">Create</a>
 				</div>
-				<div class="btn">
-					<a href="step0.php">Create New Character</a>
-				</div>
+				<input type='submit' value='View' name='view_submit' id='view_submit'>
+				<input type='submit' value='Delete' name='delete_submit' id='delete_submit'>
 			</div>
 		</div>
 	</div>
 </div>
+</form>
+
+<?php
+
+if(isset($_POST['delete_submit'])) {
+	$mysqli->query("SET FOREIGN_KEY_CHECKS = 0");
+	$mysqli->query("DELETE FROM characters WHERE cID = '$_POST[character]'");
+	$mysqli->query("SET FOREIGN_KEY_CHECKS = 1");
+	header("Refresh:0");
+}
+
+if(isset($_POST['view_submit'])) {
+	$_SESSION['cid'] = $_POST['character'];
+}
+ ?>
 
 <?php include "templates/footer.php"; ?>

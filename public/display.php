@@ -23,7 +23,7 @@
   $constitution = $row['constitution'];
   $con_mod = round(($constitution - 10)/2, 0, PHP_ROUND_HALF_DOWN);
   $intelligence = $row['intelligence'];
-  $int_mod = round(($intelligence - 10)/2, 0, PHP_ROUND_HALF_DOWN); 
+  $int_mod = round(($intelligence - 10)/2, 0, PHP_ROUND_HALF_DOWN);
   $wisdom = $row['wisdom'];
   $wis_mod = round(($wisdom - 10)/2, 0, PHP_ROUND_HALF_DOWN);
   $charisma = $row['charisma'];
@@ -43,6 +43,11 @@
   $skills = array();
   while($rows = $resultSet->fetch_assoc()){
     array_push($skills, $rows['skill_name']);
+  }
+  $resultSet = $mysqli->query("SELECT * FROM background WHERE background_name = '$background'");
+  while($rows = $resultSet->fetch_assoc()){
+    array_push($skills, $rows['skill_proficiency_1']);
+    array_push($skills, $rows['skill_proficiency_2']);
   }
   //characteristics
   $mysqli = NEW MySQLi('localhost','root','root','dnd');
@@ -95,10 +100,10 @@
     array_push($weapon, $rows['weapon_name']);
   }
   //find matching weapons
-  $char_wepaons = array();
+  $char_weapons = array();
   foreach ($weapon as $key_w => $value_w) {
     foreach ($items as $key_i => $value_i) {
-      if(strstr($value_a, $value_i)) {
+      if(strstr($value_i, $value_w)) {
         array_push($char_weapons, $value_w);
       }
     }
@@ -123,7 +128,12 @@
   $resultSet = $mysqli->query("SELECT * FROM race where race_name = '$race'");
   $row = $resultSet->fetch_assoc();
   $speed = $row['speed'];
-  //spells
+  //get spells
+  $spells = array();
+  $resultSet = $mysqli->query("SELECT * FROM spells where cID = '$_SESSION[cid]'");
+  while($row = $resultSet->fetch_assoc()){
+    array_push($spells, $row['spell_name']);
+  }
   //equipment
  ?>
 
@@ -642,23 +652,88 @@
        <div class="stat display-weapon-1">
          <?php
          if(!empty($char_weapons)){
-           echo array_pop($char_weapons);
+           $weapon1 = array_pop($char_weapons);
+           echo $weapon1;
          }
          ?>
        </div>
        <div class="stat display-weapon-2">
          <?php
          if(!empty($char_weapons)){
-           echo array_pop($char_weapons);
+           $weapon2 = array_pop($char_weapons);
+           echo $weapon2;
          }
          ?>
        </div>
        <div class="stat display-weapon-3">
          <?php
          if(!empty($char_weapons)){
-           echo array_pop($char_weapons);
+           $weapon3 = array_pop($char_weapons);
+           echo $weapon3;
          }
          ?>
+       </div>
+       <div class="stat display-damage-1">
+         <?php
+
+         if(isset($weapon1)){
+           $resultSet = $mysqli->query("SELECT * FROM weapons WHERE weapon_name = '$weapon1'");
+           while($rows = $resultSet->fetch_assoc()){
+             echo $rows['damage'];
+           }
+         }
+
+          ?>
+       </div>
+
+       <div class="stat display-damage-2">
+         <?php
+
+         if(isset($weapon2)){
+           $resultSet = $mysqli->query("SELECT * FROM weapons WHERE weapon_name = '$weapon2'");
+           while($rows = $resultSet->fetch_assoc()){
+             echo $rows['damage'];
+           }
+         }
+
+          ?>
+       </div>
+
+       <div class="stat display-damage-3">
+         <?php
+
+         if(isset($weapon3)){
+           $resultSet = $mysqli->query("SELECT * FROM weapons WHERE weapon_name = '$weapon3'");
+           while($rows = $resultSet->fetch_assoc()){
+             echo $rows['damage'];
+           }
+         }
+
+          ?>
+       </div>
+
+       <div class="stat display-attack-bonus-1">
+         <?php
+         if(isset($weapon1)){
+          echo "+5";
+          }
+          ?>
+       </div>
+
+       <div class="stat display-attack-bonus-2">
+         <?php
+         if(isset($weapon2)){
+          echo "+5";
+          }
+          ?>
+       </div>
+
+       <div class="stat display-attack-bonus-3">
+         <?php
+         if(isset($weapon3)){
+          echo "+5";
+          }
+          ?>
        </div>
 
        <!--character equipment-->
@@ -688,7 +763,12 @@
 
        <!--character spells-->
        <div class="stat display-spell-name">
-         Spell Name
+         <?php foreach ($spells as $value){
+           echo $value;
+           echo "<br>";
+         }
+
+         ?>
        </div>
 
      </div>
